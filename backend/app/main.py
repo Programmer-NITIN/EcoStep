@@ -17,7 +17,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app import __version__
 from app.config import get_settings
-from app.routes import calculate, entries, health
+from app.routes import calculate, entries, health, actions, community, resources
 
 # Directory holding the built frontend (populated by the Docker build).
 _STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
@@ -29,10 +29,14 @@ _SECURITY_HEADERS = {
     "Referrer-Policy": "no-referrer",
     "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
     "Content-Security-Policy": (
-        "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; "
+        "default-src 'self'; "
+        "img-src 'self' data: https://lh3.googleusercontent.com; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com; "
         "script-src 'self'; connect-src 'self'; base-uri 'self'; frame-ancestors 'none'"
     ),
 }
+
 
 
 def create_app() -> FastAPI:
@@ -65,6 +69,10 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(calculate.router)
     app.include_router(entries.router)
+    app.include_router(actions.router)
+    app.include_router(community.router)
+    app.include_router(resources.router)
+
 
     _mount_spa(app)
     return app

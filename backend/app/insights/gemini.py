@@ -88,6 +88,8 @@ def _call_gemini(
             max_output_tokens=4096,
         ),
     )
+    if not response.text:
+        raise ValueError("Empty response from Gemini")
     payload = json.loads(response.text)
     recommendations = [
         Recommendation(
